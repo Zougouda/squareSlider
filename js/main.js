@@ -17,9 +17,18 @@ function game()
         movingElements[i].update();
         movingElements[i].draw(); 
     }
+
+
+    //TODO removeme
+    ctx.beginPath();
+    ctx.moveTo(0, HEIGHT-100);
+    ctx.lineTo(WIDTH, HEIGHT-100);
+    ctx.stroke();
 }
 
-var test = new MovingElement(300, 300, 10, 10, 50)
-    movingElements.push(test);
+var test = new MovingElement(300, 300, 10, 10, 400);
+movingElements.push(test);
+test.controls = [38, 40, 37, 39];
+playerControls();
 
-    setInterval(game, DISPLAY_RATE);
+setInterval(game, DISPLAY_RATE);
