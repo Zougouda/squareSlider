@@ -13,9 +13,39 @@ function MovingElement(x, y, width, height, speed)
 
     this.applyGravity = function()
     {
-        if(this.y < (HEIGHT - this.height))
+        this.onPlatform = false;
+        for(var i = 0; i < movingElements.length; i++)
         {
-            this.y += gravitySpeed * DISPLAY_RATE / 1000;
+            var platform = movingElements[i];
+            if(platform instanceof Platform)
+            {
+                if( (this.x > platform.x) && ( (this.x + this.width) < (platform.x + platform.width) ) )
+                {
+                    if( (this.y + this.height < platform.y) || (this.y > platform.y + platform.height/2 ) )
+                    {
+                        this.onPlatform = false;
+                    }
+                    else
+                    {
+                        this.onPlatform = true;
+                        this.resetJumpNumber();
+                        this.lastJumpY = this.y;
+                    }
+                }
+            }
+        }
+
+        if(this.onPlatform == false)
+        {
+            if(this.y < (HEIGHT - this.height))
+            {
+                this.y += gravitySpeed * DISPLAY_RATE / 1000;
+            }
+            else
+            {
+                this.lastJumpY = this.y;
+                this.resetJumpNumber();
+            }
         }
     }
 
@@ -23,9 +53,12 @@ function MovingElement(x, y, width, height, speed)
     {
         this.applyGravity();
         keyControls(this, DISPLAY_RATE / 1000);
-        if(this.y + this.height >= HEIGHT)
-            this.jumpNumber = this.maxJumpNumber;
     }
+
+    this.resetJumpNumber = function()
+    {
+            this.jumpNumber = this.maxJumpNumber;
+    };
 
     this.draw = function()
     {
@@ -35,10 +68,24 @@ function MovingElement(x, y, width, height, speed)
 
     this.jump = function(modifier)
     {
+        this.canJump = true;
+        for(var i = 0; i < movingElements.length; i++)
+        {
+            var platform = movingElements[i];
+            if(platform instanceof Platform)
+            {
+                if( (this.x > platform.x) && ( (this.x + this.width) < (platform.x + platform.width) ) )
+                {
+                    if(this.y <= platform.y + platform.height)
+                        this.canJump = false;
+                }
+            }
+        }
 
         if(this.jumpNumber > 0)
         {
-            if(this.y > (this. lastJumpY - this.jumpMaxHeight)  )
+
+            if(this.y > (this. lastJumpY - this.jumpMaxHeight) && this.canJump == true )
             {
                 this.y -= this.jumpSpeed * modifier;
             }

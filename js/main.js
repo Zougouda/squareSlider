@@ -18,16 +18,14 @@ function game()
         movingElements[i].draw(); 
     }
 
-
-    //TODO removeme
-    ctx.beginPath();
-    ctx.moveTo(0, HEIGHT-100);
-    ctx.lineTo(WIDTH, HEIGHT-100);
-    ctx.stroke();
 }
 
 var test = new MovingElement(300, 300, 10, 10, 400);
+var firstPlatform = new Platform(450, HEIGHT - 80, 100, 20, 400);
+var secondPlatform = new Platform(350, HEIGHT - 160, 100, 20, 400);
 movingElements.push(test);
+movingElements.push(firstPlatform);
+movingElements.push(secondPlatform);
 test.controls = [38, 40, 37, 39];
 playerControls();
 

@@ -10,7 +10,7 @@ function playerControls()
     addEventListener("keyup", function (e) {
         if (e.keyCode == test.controls[0]) { // Player holding up
             test.jumpNumber--;
-            test.lastJumpY = test.y;
+            test.lastJumpY = test.y + test.height;
         }
         delete keysDown[e.keyCode];
     }, false);
