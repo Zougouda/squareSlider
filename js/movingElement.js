@@ -23,7 +23,8 @@ function MovingElement(x, y, width, height, speed)
                 {
                     if( (this.y + this.height < platform.y) || (this.y > platform.y + platform.height/2 ) )
                     {
-                        this.onPlatform = false;
+                        //this.onPlatform = false;
+                        continue;
                     }
                     else
                     {
@@ -45,6 +46,8 @@ function MovingElement(x, y, width, height, speed)
             {
                 this.lastJumpY = this.y;
                 this.resetJumpNumber();
+                /*alert("LOSER!");
+                startGame();*/
             }
         }
     }
@@ -76,7 +79,7 @@ function MovingElement(x, y, width, height, speed)
             {
                 if( (this.x > platform.x) && ( (this.x + this.width) < (platform.x + platform.width) ) )
                 {
-                    if(this.y <= platform.y + platform.height)
+                    if(this.y <= (platform.y + platform.height) && (this.y + this.height) > platform.y)
                         this.canJump = false;
                 }
             }
@@ -91,6 +94,82 @@ function MovingElement(x, y, width, height, speed)
             }
             else
                 this.jumpNumber--;
+        }
+    }
+
+    this.moveLeft = function(modifier)
+    {
+        if(this.x > 0)
+        {
+            var travelDistance = this.speed * modifier;
+            for(var i = 0; i < movingElements.length; i++)
+            {
+                var platform = movingElements[i];
+                if(platform instanceof Platform)
+                {
+                    /*if( this.x > platform.x + platform.width || this.x + this.width < platform.x )
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                            this.canMove = false;
+                    }*/
+
+                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                    {
+                        var distanceFromPlatform = this.x - (platform.x + platform.width);
+
+                        if(distanceFromPlatform < travelDistance)
+                        {
+                            if(distanceFromPlatform < travelDistance)
+                                travelDistance = this.x - (platform.x + platform.width);
+                            if(distanceFromPlatform <= 0)
+                                travelDistance = 0;
+                        }
+                    }
+                }
+            }
+                this.x -= travelDistance;
+        }
+    }
+
+    this.moveRight = function(modifier)
+    {
+        if((this.x + this.width) < WIDTH)
+        {
+            var travelDistance = this.speed * modifier;
+            for(var i = 0; i < movingElements.length; i++)
+            {
+                var platform = movingElements[i];
+                if(platform instanceof Platform)
+                {
+                    /*if( this.x > platform.x + platform.width || this.x + this.width < platform.x )
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                            this.canMove = false;
+                    }*/
+
+                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                    {
+                        var distanceFromPlatform = platform.x - (this.x + this.width);
+
+                        if(distanceFromPlatform < travelDistance)
+                        {
+                            if(distanceFromPlatform < travelDistance)
+                                travelDistance = platform.x - (this.x + this.width);
+                            if(distanceFromPlatform <= 0)
+                                travelDistance = 0;
+                        }
+                    }
+                }
+            }
+                this.x += travelDistance;
         }
     }
 }

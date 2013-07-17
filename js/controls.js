@@ -29,22 +29,10 @@ var keyControls = function (obj, modifier) {
             obj.jump(modifier);
         }
     }
-    if (/*40*/obj.controls[1] in keysDown) { // Player holding down
-        if((obj.y + obj.height/2) < HEIGHT)
-        {
-            obj.y += obj.speed * modifier;
-        }
-    }
     if (/*37*/obj.controls[2] in keysDown) { // Player holding left
-        if((obj.x + obj.width/2) > 0)
-        {
-            obj.x -= obj.speed * modifier;
-        }
+        obj.moveLeft(modifier);
     }
     if (/*39*/obj.controls[3] in keysDown) { // Player holding right
-        if((obj.x + obj.width /2) < WIDTH)
-        {
-            obj.x += obj.speed * modifier;
-        }
+        obj.moveRight(modifier);
     }
 };
