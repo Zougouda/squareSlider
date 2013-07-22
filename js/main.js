@@ -21,7 +21,7 @@ function startGame()
         ctx.clearRect(0, 0, WIDTH, HEIGHT);
         for(var i = 0; i < movingElements.length; i++)
         {
-            movingElements[i].update();
+            movingElements[i].update(DISPLAY_RATE/1000);
             movingElements[i].draw(); 
         }
     }
@@ -30,16 +30,19 @@ function startGame()
     if(typeof test != "undefined")
         delete test;
     test = new MovingElement(playerX, playerY, 10, 10, 400);
-    /*var firstPlatform = new Platform(450, HEIGHT - 80, 100, 20, 400);
-      var secondPlatform = new Platform(350, HEIGHT - 160, 100, 20, 400);*/
     movingElements.push(test);
+
     if(platformsFromLoad.length > 0)
         movingElements =  movingElements.concat(platformsFromLoad); //platforms add
-    /*movingElements.push(firstPlatform);
-      movingElements.push(secondPlatform);*/
+
+    if(badGuysFromLoad.length > 0)
+        movingElements =  movingElements.concat(badGuysFromLoad); //badGuys add
+
     test.controls = [38, 40, 37, 39];
     playerNoControls();
-    playerControls();
+    playerControls(DISPLAY_RATE/1000);
+
+    console.log(movingElements);
 
     if(typeof gameInterval != "undefined")
         clearInterval(gameInterval);

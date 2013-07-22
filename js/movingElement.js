@@ -11,7 +11,7 @@ function MovingElement(x, y, width, height, speed)
     this.jumpNumber = this.maxJumpNumber = 2;
     this.lastJumpY = HEIGHT;
 
-    this.applyGravity = function()
+    this.applyGravity = function(modifier)
     {
         this.onPlatform = false;
         for(var i = 0; i < movingElements.length; i++)
@@ -40,7 +40,7 @@ function MovingElement(x, y, width, height, speed)
         {
             if(this.y < (HEIGHT - this.height))
             {
-                this.y += gravitySpeed * DISPLAY_RATE / 1000;
+                this.y += gravitySpeed * modifier;
             }
             else
             {
@@ -52,10 +52,10 @@ function MovingElement(x, y, width, height, speed)
         }
     }
 
-    this.update = function()
+    this.update = function(modifier)
     {
-        this.applyGravity();
-        keyControls(this, DISPLAY_RATE / 1000);
+        this.applyGravity(modifier);
+        keyControls(this, modifier);
     }
 
     this.resetJumpNumber = function()
@@ -107,26 +107,14 @@ function MovingElement(x, y, width, height, speed)
                 var platform = movingElements[i];
                 if(platform instanceof Platform)
                 {
-                    /*if( this.x > platform.x + platform.width || this.x + this.width < platform.x )
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
-                            this.canMove = false;
-                    }*/
-
-                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) && (this.x >= platform.x + platform.width) ) 
                     {
                         var distanceFromPlatform = this.x - (platform.x + platform.width);
 
                         if(distanceFromPlatform < travelDistance)
                         {
                             if(distanceFromPlatform < travelDistance)
-                                travelDistance = this.x - (platform.x + platform.width);
-                            if(distanceFromPlatform <= 0)
-                                travelDistance = 0;
+                                travelDistance = distanceFromPlatform
                         }
                     }
                 }
@@ -145,26 +133,15 @@ function MovingElement(x, y, width, height, speed)
                 var platform = movingElements[i];
                 if(platform instanceof Platform)
                 {
-                    /*if( this.x > platform.x + platform.width || this.x + this.width < platform.x )
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
-                            this.canMove = false;
-                    }*/
 
-                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) ) 
+                    if ( (this.y + this.height >= platform.y) && (this.y <= platform.y + platform.height) && (this.x <= platform.x) ) 
                     {
                         var distanceFromPlatform = platform.x - (this.x + this.width);
 
                         if(distanceFromPlatform < travelDistance)
                         {
                             if(distanceFromPlatform < travelDistance)
-                                travelDistance = platform.x - (this.x + this.width);
-                            if(distanceFromPlatform <= 0)
-                                travelDistance = 0;
+                                travelDistance = distanceFromPlatform;
                         }
                     }
                 }
@@ -172,4 +149,24 @@ function MovingElement(x, y, width, height, speed)
                 this.x += travelDistance;
         }
     }
+}
+
+function BadGuy(x, y, width, height, speed)
+{
+    MovingElement.apply(this, [x, y, width, height, speed]);
+
+   this.behaviour = {x: 1}; 
+
+
+   this.update = function()
+   {
+        this.applyGravity();
+        this.moveLeft();
+   };
+
+    this.draw = function()
+    {
+        ctx.fillStyle = "red";
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    };
 }
