@@ -29,7 +29,7 @@ function startGame()
     //var test = new MovingElement(300, 300, 10, 10, 400);
     if(typeof test != "undefined")
         delete test;
-    test = new MovingElement(playerX, playerY, 10, 10, 400);
+    test = new MovingElement(playerX, playerY, 10, 10, 250);
     movingElements.push(test);
 
     if(platformsFromLoad.length > 0)

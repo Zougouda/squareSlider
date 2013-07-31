@@ -14,23 +14,30 @@ function MovingElement(x, y, width, height, speed)
     this.applyGravity = function(modifier)
     {
         this.onPlatform = false;
+        var travelDistance = gravitySpeed * modifier;
         for(var i = 0; i < movingElements.length; i++)
         {
             var platform = movingElements[i];
             if(platform instanceof Platform)
             {
-                if( (this.x > platform.x) && ( (this.x + this.width) < (platform.x + platform.width) ) )
+                if( (this.x + this.width > platform.x) && ( (this.x) < (platform.x + platform.width) ) )
                 {
-                    if( (this.y + this.height < platform.y) || (this.y > platform.y + platform.height/2 ) )
+                    if(this.y + this.height <= platform.y)
                     {
-                        //this.onPlatform = false;
-                        continue;
-                    }
-                    else
-                    {
-                        this.onPlatform = true;
-                        this.resetJumpNumber();
-                        this.lastJumpY = this.y;
+                        var distanceFromPlatform =  platform.y - (this.y + this.height);
+                        if(travelDistance > distanceFromPlatform)
+                            travelDistance = distanceFromPlatform;
+                        if( (this.y + this.height < platform.y) || (this.y > platform.y + platform.height/2 ) )
+                        {
+                            //this.onPlatform = false;
+                            continue;
+                        }
+                        else
+                        {
+                            this.onPlatform = true;
+                            this.resetJumpNumber();
+                            this.lastJumpY = this.y;
+                        }
                     }
                 }
             }
@@ -40,13 +47,16 @@ function MovingElement(x, y, width, height, speed)
         {
             if(this.y < (HEIGHT - this.height))
             {
-                this.y += gravitySpeed * modifier;
+                if(this.y + this.height + travelDistance > HEIGHT)
+                    this.y += (HEIGHT - (this.y + this.height))
+                else
+                    this.y += travelDistance;
             }
             else
             {
                 this.lastJumpY = this.y;
                 this.resetJumpNumber();
-                /*alert("LOSER!");
+            /*alert("LOSER!");
                 startGame();*/
             }
         }
@@ -60,7 +70,7 @@ function MovingElement(x, y, width, height, speed)
 
     this.resetJumpNumber = function()
     {
-            this.jumpNumber = this.maxJumpNumber;
+        this.jumpNumber = this.maxJumpNumber;
     };
 
     this.draw = function()
@@ -71,6 +81,7 @@ function MovingElement(x, y, width, height, speed)
 
     this.jump = function(modifier)
     {
+        var travelDistance = this.jumpSpeed * modifier;
         this.canJump = true;
         for(var i = 0; i < movingElements.length; i++)
         {
@@ -79,18 +90,25 @@ function MovingElement(x, y, width, height, speed)
             {
                 if( (this.x > platform.x) && ( (this.x + this.width) < (platform.x + platform.width) ) )
                 {
-                    if(this.y <= (platform.y + platform.height) && (this.y + this.height) > platform.y)
-                        this.canJump = false;
+                    if(platform.y + platform.height <= this.y)
+                    {
+                        var distanceFromPlatform =  this.y - (platform.y + platform.height);
+                        if(travelDistance > distanceFromPlatform)
+                            travelDistance = distanceFromPlatform;
+                        
+                        if(travelDistance == gravitySpeed*modifier) //Si le haut de l'élément touche le bord de la plateforme
+                            //                        if(this.y <= (platform.y + platform.height) && (this.y + this.height) > platform.y)
+                            this.canJump = false;
+                    }
                 }
             }
         }
-
-        if(this.jumpNumber > 0)
+        
+        if(this.jumpNumber > 0 )
         {
-
-            if(this.y > (this. lastJumpY - this.jumpMaxHeight) && this.canJump == true )
+            if(this.y > (this. lastJumpY - this.jumpMaxHeight) && this.canJump)
             {
-                this.y -= this.jumpSpeed * modifier;
+                this.y -= travelDistance;
             }
             else
                 this.jumpNumber--;
@@ -119,7 +137,7 @@ function MovingElement(x, y, width, height, speed)
                     }
                 }
             }
-                this.x -= travelDistance;
+            this.x -= travelDistance;
         }
     }
 
@@ -146,7 +164,7 @@ function MovingElement(x, y, width, height, speed)
                     }
                 }
             }
-                this.x += travelDistance;
+            this.x += travelDistance;
         }
     }
 }
@@ -155,14 +173,16 @@ function BadGuy(x, y, width, height, speed)
 {
     MovingElement.apply(this, [x, y, width, height, speed]);
 
-   this.behaviour = {x: 1}; 
+    this.behaviour = {
+        x: 1
+    }; 
 
 
-   this.update = function()
-   {
-        this.applyGravity();
-        this.moveLeft();
-   };
+    this.update = function(modifier)
+    {
+        this.applyGravity(modifier);
+        this.moveLeft(modifier);
+    };
 
     this.draw = function()
     {
